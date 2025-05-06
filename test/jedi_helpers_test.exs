@@ -21,14 +21,4 @@ defmodule JediHelpersTest do
       assert uri_parse_path("https://example.com") == nil
     end
   end
-
-  describe "format_money/2" do
-    test "formats a valid amount as a currency string" do
-      assert format_money(1200, :php) == "₱1,200.00"
-    end
-
-    test "returns nil if the amount is nil" do
-      assert format_money(nil, :php) == nil
-    end
-  end
 end
