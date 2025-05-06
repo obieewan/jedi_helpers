@@ -21,4 +21,19 @@ defmodule JediHelpersTest do
       assert uri_parse_path("https://example.com") == nil
     end
   end
+
+  describe "atom_to_readable_string/1" do
+    test "converts single-word atom" do
+      assert JediHelpers.atom_to_readable_string(:admin) == "Admin"
+    end
+
+    test "converts multi-word atom with underscores" do
+      assert JediHelpers.atom_to_readable_string(:user_profile) == "User Profile"
+    end
+
+    test "converts complex atom with multiple words" do
+      assert JediHelpers.atom_to_readable_string(:super_admin_dashboard) ==
+               "Super Admin Dashboard"
+    end
+  end
 end

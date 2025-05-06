@@ -47,4 +47,26 @@ defmodule JediHelpers do
   def uri_parse_path(uri) do
     URI.parse(uri).path
   end
+
+  @doc """
+  Converts an atom into a human-readable string by title-casing its segments.
+
+  Useful for displaying labels or headings derived from atoms.
+
+  ## Examples
+
+      iex> JediHelpers.atom_to_readable_string(:user_profile)
+      "User Profile"
+
+      iex> JediHelpers.atom_to_readable_string(:admin)
+      "Admin"
+  """
+  @spec atom_to_readable_string(atom()) :: String.t()
+  def atom_to_readable_string(atom) when is_atom(atom) do
+    atom
+    |> Atom.to_string()
+    |> String.split("_")
+    |> Enum.map(&String.capitalize/1)
+    |> Enum.join(" ")
+  end
 end
