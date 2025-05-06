@@ -47,4 +47,29 @@ defmodule JediHelpers do
   def uri_parse_path(uri) do
     URI.parse(uri).path
   end
+
+  @doc """
+  Formats a numeric amount as a currency string using `Money`.
+
+  Returns `nil` if the amount is `nil`.
+
+  ## Example
+
+      iex> format_money(1200, :php)
+      "₱1,200.00"
+
+  See [Money.Currency.known_current_currencies/0](https://hexdocs.pm/ex_money/Money.Currency.html#known_current_currencies/0)
+  for valid currency atoms.
+  """
+  @spec format_money(number() | nil, atom()) :: String.t() | nil
+  def format_money(nil, _currency), do: nil
+
+  def format_money(amount, currency) do
+    {:ok, formatted_money} =
+      amount
+      |> Money.new(currency)
+      |> Money.to_string()
+
+    formatted_money
+  end
 end
