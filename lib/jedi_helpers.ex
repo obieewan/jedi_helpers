@@ -4,15 +4,26 @@ defmodule JediHelpers do
   """
 
   @doc """
-  Hello world.
+  Returns the underscored (snake_case) name of a struct's module as a string.
 
-  ## Examples
+  Useful for generating type identifiers from structs, especially in APIs or dynamic logic.
 
-      iex> JediHelpers.hello()
-      :world
+  ## Example
 
+      iex> resource_type(%JediHelpers.BlogPost{})
+      "blog_post"
+
+  ## Parameters:
+  - `resource` (`struct`): Any Elixir struct.
+
+  ## Returns:
+  - `String.t()`: The snake_case name of the struct's module (last segment only).
   """
-  def hello do
-    :world
+  @spec resource_type(struct()) :: String.t()
+  def resource_type(%module{} = _resource) do
+    module
+    |> Module.split()
+    |> List.last()
+    |> Macro.underscore()
   end
 end
