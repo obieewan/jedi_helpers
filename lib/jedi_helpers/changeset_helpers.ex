@@ -28,10 +28,6 @@ defmodule JediHelpers.ChangesetHelpers do
 
   @spec trim_whitespace(Ecto.Changeset.t(), atom() | [atom()], keyword()) :: Ecto.Changeset.t()
 
-  @field_type :string
-
-  @spec trim_whitespace(Ecto.Changeset.t(), atom() | [atom()], keyword()) :: Ecto.Changeset.t()
-
   def trim_whitespace(changeset, keys, opts \\ [])
 
   def trim_whitespace(changeset, key, opts) when is_atom(key) do
