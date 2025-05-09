@@ -34,7 +34,9 @@ defmodule JediHelpers.MixProject do
       {:ecto, "~> 3.12.0"},
       # {:ex_cldr, "~> 2.42.0"},
       # {:ex_money, "~> 5.21.0"},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:decimal, "~> 2.3.0"},
+      {:number, "~> 1.0.5"}
     ]
   end
 end

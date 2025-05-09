@@ -125,4 +125,40 @@ defmodule JediHelpers do
     raise ArgumentError,
           "Expected a struct or map with :first_name, :last_name, and :email, got: #{inspect(user)}"
   end
+
+  @doc """
+  Formats a decimal or numeric input by:
+
+    - Converting it to a `Decimal`
+    - Rounding to 2 decimal places
+    - Converting to a string
+    - Adding thousands separators (e.g., `"1,234.56"`)
+
+  Returns `nil` if the input is `nil`.
+
+  ## Examples
+
+      iex> format_decimal(1234567.891)
+      "1,234,567.89"
+
+      iex> format_decimal("1000.1")
+      "1,000.10"
+
+      iex> format_decimal(nil)
+      nil
+
+  ## Requirements
+
+  Requires the `:decimal` and `:number` libraries.
+
+  """
+  def format_decimal(value) when is_nil(value), do: nil
+
+  def format_decimal(value) do
+    value
+    |> Decimal.new()
+    |> Decimal.round(2)
+    |> Decimal.to_string()
+    |> Number.Delimit.number_to_delimited()
+  end
 end
