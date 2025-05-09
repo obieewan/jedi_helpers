@@ -69,4 +69,60 @@ defmodule JediHelpers do
     |> Enum.map(&String.capitalize/1)
     |> Enum.join(" ")
   end
+
+  @doc """
+  Formats a user's full name as `"First Last"`.
+
+  Returns `nil` if the input is `nil`.
+
+  ## Examples
+
+      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"})
+      "Luke Skywalker"
+  """
+  def format_name(nil), do: nil
+
+  def format_name(%{first_name: first, last_name: last}) do
+    "#{first} #{last}"
+  end
+
+  @doc """
+  Formats a user's name as `"Last, First"` if `:last_first` style is passed.
+
+  ## Examples
+
+      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"}, :last_first)
+      "Skywalker, Luke"
+  """
+  def format_name(user, style \\ :default)
+
+  def format_name(%{first_name: first, last_name: last}, :last_first) do
+    "#{last}, #{first}"
+  end
+
+  def format_name(%{first_name: first, last_name: last}, _style) do
+    "#{first} #{last}"
+  end
+
+  def format_name(user, _style) do
+    raise ArgumentError,
+          "Expected a struct or map with :first_name and :last_name, got: #{inspect(user)}"
+  end
+
+  @doc """
+  Formats a user's full name with email as `"First Last - email@example.com"`.
+
+  ## Examples
+
+      iex> format_name_with_email(%{first_name: "Leia", last_name: "Organa", email: "leia@alderaan.com"})
+      "Leia Organa - leia@alderaan.com"
+  """
+  def format_name_with_email(%{first_name: first, last_name: last, email: email}) do
+    "#{first} #{last} - #{email}"
+  end
+
+  def format_name_with_email(user) do
+    raise ArgumentError,
+          "Expected a struct or map with :first_name, :last_name, and :email, got: #{inspect(user)}"
+  end
 end
