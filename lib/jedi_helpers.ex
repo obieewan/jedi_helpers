@@ -69,4 +69,98 @@ defmodule JediHelpers do
     |> Enum.map(&String.capitalize/1)
     |> Enum.join(" ")
   end
+
+  @doc """
+  Formats a user's full name as `"First Last"`.
+
+  Returns `nil` if the input is `nil`.
+
+  ## Examples
+
+      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"})
+      "Luke Skywalker"
+  """
+  def format_name(nil), do: nil
+
+  def format_name(%{first_name: first, last_name: last}) do
+    "#{first} #{last}"
+  end
+
+  @doc """
+  Formats a user's name as `"Last, First"` if `:last_first` style is passed.
+
+  ## Examples
+
+      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"}, :last_first)
+      "Skywalker, Luke"
+  """
+  def format_name(user, style \\ :default)
+
+  def format_name(%{first_name: first, last_name: last}, :last_first) do
+    "#{last}, #{first}"
+  end
+
+  def format_name(%{first_name: first, last_name: last}, _style) do
+    "#{first} #{last}"
+  end
+
+  def format_name(user, _style) do
+    raise ArgumentError,
+          "Expected a struct or map with :first_name and :last_name, got: #{inspect(user)}"
+  end
+
+  @doc """
+  Formats a user's full name with email as `"First Last - email@example.com"`.
+
+  ## Examples
+
+      iex> format_name_with_email(%{first_name: "Leia", last_name: "Organa", email: "leia@alderaan.com"})
+      "Leia Organa - leia@alderaan.com"
+  """
+  def format_name_with_email(%{first_name: first, last_name: last, email: email}) do
+    "#{first} #{last} - #{email}"
+  end
+
+  def format_name_with_email(user) do
+    raise ArgumentError,
+          "Expected a struct or map with :first_name, :last_name, and :email, got: #{inspect(user)}"
+  end
+
+  @doc """
+  Formats a decimal or numeric input by:
+
+    - Converting it to a `Decimal`
+    - Rounding to 2 decimal places
+    - Converting to a string
+    - Adding thousands separators (e.g., `"1,234.56"`)
+
+  Returns `nil` if the input is `nil`.
+
+  ## Examples
+
+      iex> format_decimal(1234567.891)
+      "1,234,567.89"
+
+      iex> format_decimal("1000.1")
+      "1,000.10"
+
+      iex> format_decimal(nil)
+      nil
+
+  ## Requirements
+
+  Requires the `:decimal` and `:number` libraries.
+
+  """
+  def format_decimal(nil), do: nil
+
+  def format_decimal(""), do: nil
+
+  def format_decimal(value) do
+    value
+    |> Decimal.new()
+    |> Decimal.round(2)
+    |> Decimal.to_string()
+    |> Number.Delimit.number_to_delimited()
+  end
 end
