@@ -4,7 +4,7 @@ defmodule JediHelpers.MixProject do
   def project do
     [
       app: :jedi_helpers,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -14,7 +14,14 @@ defmodule JediHelpers.MixProject do
         name: "jedi_helpers",
         maintainers: ["Obie"],
         licenses: ["MIT"],
-        links: %{"GitHub" => "https://github.com/obieewan/jedi_helpers"}
+        links: %{
+          "GitHub" => "https://github.com/obieewan/jedi_helpers",
+          "Changelog" => "https://github.com/obieewan/jedi_helpers/blob/main/CHANGELOG.md"
+        }
+      ],
+      docs: [
+        main: "readme",
+        extras: ["README.md", "CHANGELOG.md"]
       ]
     ]
   end
