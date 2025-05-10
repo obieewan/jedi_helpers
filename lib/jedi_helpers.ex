@@ -163,4 +163,22 @@ defmodule JediHelpers do
     |> Decimal.to_string()
     |> Number.Delimit.number_to_delimited()
   end
+
+  def format_money(amount, _currency, opts \\ [])
+
+  def format_money(nil, _currency, opts), do: nil
+
+  def format_money(amount, currency, opts) do
+      amount
+      |> Money.new(currency)
+      |> Money.to_string(opts)
+    |> case do
+      {:ok, formatted_money} ->
+        formatted_money
+
+      {:error, reason} ->
+        reason
+    end
+
+  end
 end

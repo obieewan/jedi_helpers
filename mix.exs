@@ -43,7 +43,8 @@ defmodule JediHelpers.MixProject do
       # {:ex_money, "~> 5.21.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:decimal, "~> 2.3.0"},
-      {:number, "~> 1.0.5"}
+      {:number, "~> 1.0.5"},
+      {:ex_money, "~> 5.21.0"}
     ]
   end
 end
