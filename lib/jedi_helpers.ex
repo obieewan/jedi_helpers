@@ -166,7 +166,7 @@ defmodule JediHelpers do
 
   def format_money(amount, _currency, opts \\ [])
 
-  def format_money(nil, _currency, opts), do: nil
+  def format_money(nil, _currency, _opts), do: nil
 
   def format_money(amount, currency, opts) do
       amount
