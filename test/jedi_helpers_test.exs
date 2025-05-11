@@ -99,4 +99,19 @@ defmodule JediHelpersTest do
       assert JediHelpers.format_decimal("") == nil
     end
   end
+
+  describe "format_money/3" do
+    test "formats a number with default options" do
+      assert JediHelpers.format_money(1000, :php) == "₱1,000.00"
+      assert JediHelpers.format_money("1000", :php) == "₱1,000.00"
+    end
+
+    test "returns nil if amount is nil" do
+      assert JediHelpers.format_money(nil, :php) == nil
+    end
+
+    test "formats with symbol: false" do
+      assert JediHelpers.format_money(1234.56, :php, symbol: false) == "₱1,234.56"
+    end
+  end
 end
