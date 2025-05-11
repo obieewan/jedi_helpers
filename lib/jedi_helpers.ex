@@ -195,20 +195,24 @@ defmodule JediHelpers do
   The `opts` are forwarded to `Money.to_string/2`.  
   Refer to the [ex_money Money.to_string/2 documentation](https://hexdocs.pm/ex_money/Money.html#to_string/2) for the full list of supported options.
   """
-  def format_money(amount, _currency, opts \\ [])
+
+  def format_money(amount, currency, opts \\ [])
 
   def format_money(nil, _currency, _opts), do: nil
 
   def format_money(amount, currency, opts) do
-    amount
-    |> Money.new(currency)
-    |> Money.to_string(opts)
-    |> case do
-      {:ok, formatted_money} ->
-        formatted_money
+    money =
+      cond do
+        is_struct(amount, Money) -> amount
+        is_integer(amount) -> Money.new(amount, currency)
+        is_binary(amount) -> Money.new(amount, currency)
+        is_float(amount) -> Money.from_float(amount, currency)
+        true -> raise ArgumentError, "Invalid amount type: #{inspect(amount)}"
+      end
 
-      {:error, reason} ->
-        reason
+    case Money.to_string(money, opts) do
+      {:ok, formatted} -> formatted
+      {:error, reason} -> raise RuntimeError, "Failed to format money: #{inspect(reason)}"
     end
   end
 end

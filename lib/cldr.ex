@@ -1,6 +1,8 @@
 defmodule JediHelpers.Cldr do
+  @moduledoc false
+
   use Cldr,
-    locales: ["en", "fr", "zh"],
+    locales: ["en"],
     default_locale: "en",
     providers: [Cldr.Number, Money]
 end
