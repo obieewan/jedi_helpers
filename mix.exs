@@ -4,7 +4,7 @@ defmodule JediHelpers.MixProject do
   def project do
     [
       app: :jedi_helpers,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -43,7 +43,7 @@ defmodule JediHelpers.MixProject do
       {:decimal, "~> 2.3.0"},
       {:number, "~> 1.0.5"},
       {:ex_money, "~> 5.21.0"},
-      {:ex_cldr, "~> 2.42.0"},
+      {:ex_cldr, "~> 2.42.0"}
     ]
   end
 end

@@ -164,14 +164,45 @@ defmodule JediHelpers do
     |> Number.Delimit.number_to_delimited()
   end
 
+  @doc """
+  Formats a given amount into a currency string using `Money`.
+
+  ## Parameters
+
+    - `amount`: A number representing the amount to format.
+    - `currency`: A string or atom representing the ISO 4217 currency code (e.g., `:php` for Philippine Peso).
+    - `opts` (optional): A keyword list of formatting options passed to `Money.to_string/2`.
+
+  ## Returns
+
+    - A formatted currency string on success.
+    - The error reason as a string on failure.
+    - `nil` if the `amount` is `nil`.
+
+  ## Examples
+
+      iex> format_money(1000, :php)
+      "₱1,000.00"
+
+      iex> format_money(nil, :php)
+      nil
+
+      iex> format_money(1234.56, :php, symbol: false)
+      "1,234.56 PHP"
+
+  ## Formatting Options
+
+  The `opts` are forwarded to `Money.to_string/2`.  
+  Refer to the [ex_money Money.to_string/2 documentation](https://hexdocs.pm/ex_money/Money.html#to_string/2) for the full list of supported options.
+  """
   def format_money(amount, _currency, opts \\ [])
 
   def format_money(nil, _currency, _opts), do: nil
 
   def format_money(amount, currency, opts) do
-      amount
-      |> Money.new(currency)
-      |> Money.to_string(opts)
+    amount
+    |> Money.new(currency)
+    |> Money.to_string(opts)
     |> case do
       {:ok, formatted_money} ->
         formatted_money
@@ -179,6 +210,5 @@ defmodule JediHelpers do
       {:error, reason} ->
         reason
     end
-
   end
 end
