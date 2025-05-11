@@ -21,7 +21,8 @@ defmodule JediHelpers.MixProject do
       ],
       docs: [
         main: "readme",
-        extras: ["README.md", "CHANGELOG.md"]
+        extras: ["README.md", "CHANGELOG.md"],
+        skip_modules: [~r/^JediHelpers\.Cldr(\..+)?$/]
       ]
     ]
   end
