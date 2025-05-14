@@ -1,6 +1,6 @@
 defmodule JediHelpers.DateUtils do
   @doc """
-Parses a variety of date formats into a `Date` struct.
+  Parses a variety of date formats into a `Date` struct.
 
   ## Supported inputs
 
@@ -28,7 +28,7 @@ Parses a variety of date formats into a `Date` struct.
   iex> to_date("not a date")
   nil
 
-    """
+  """
   def to_date(""), do: nil
 
   def to_date("0"), do: nil
@@ -42,7 +42,10 @@ Parses a variety of date formats into a `Date` struct.
       # Handle Excel serial number string
       Regex.match?(~r/^\d+$/, date_string) ->
         serial = String.to_integer(date_string)
-        Date.add(~D[1900-01-01], serial - 2) # Adjust for Excel leap year bug
+        # Excel's date system starts at 1900-01-01 as day 1,
+        # and incorrectly includes 1900-02-29 as a valid date (leap year bug),
+        # so we subtract 2 to align with actual dates.
+        Date.add(~D[1900-01-01], serial - 2)
 
       String.contains?(date_string, "-") ->
         case String.split(date_string, "-") do
@@ -66,4 +69,3 @@ Parses a variety of date formats into a `Date` struct.
 
   def to_date(_), do: nil
 end
-
