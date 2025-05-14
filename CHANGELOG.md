@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-05-14
+
+### Added
+- `to_date/3` to parse dates with an optional fallback or custom parsing logic.
+
 ## [0.1.2] - 2025-05-11
 
 ### Added
