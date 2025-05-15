@@ -169,15 +169,21 @@ defmodule JediHelpers do
 
   ## Parameters
 
-    - `amount`: A number representing the amount to format.
+    - `amount`: A number representing the amount to format. Supported types:
+      - `Money` struct (used directly)
+      - `Decimal` (e.g., from Ecto fields)
+      - `integer` (treated as the smallest unit, like cents)
+      - `float`
+      - `string` (parsed into a Money amount)
     - `currency`: A string or atom representing the ISO 4217 currency code (e.g., `:php` for Philippine Peso).
     - `opts` (optional): A keyword list of formatting options passed to `Money.to_string/2`.
 
   ## Returns
 
     - A formatted currency string on success.
-    - The error reason as a string on failure.
-    - `nil` if the `amount` is `nil`.
+    - Raises a `RuntimeError` on formatting failure.
+    - Raises an `ArgumentError` for unsupported amount types.
+    - Returns `nil` if the `amount` is `nil`.
 
   ## Examples
 
@@ -186,6 +192,9 @@ defmodule JediHelpers do
 
       iex> format_money(nil, :php)
       nil
+
+      iex> format_money(Decimal.new("1234.56"), :usd)
+      "$1,234.56"
 
       iex> format_money(1234.56, :php, symbol: false)
       "1,234.56 PHP"
@@ -204,8 +213,16 @@ defmodule JediHelpers do
     money =
       cond do
         is_struct(amount, Money) -> amount
+        is_struct(amount, Decimal) -> Money.new(amount, currency)
         is_integer(amount) -> Money.new(amount, currency)
-        is_binary(amount) -> Money.new(amount, currency)
+
+is_binary(amount) ->
+  case Decimal.parse(amount) do
+    {decimal, ""} -> Money.new(decimal, currency)  
+    {_decimal, _rest} -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
+        :error -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
+  end
+
         is_float(amount) -> Money.from_float(amount, currency)
         true -> raise ArgumentError, "Invalid amount type: #{inspect(amount)}"
       end
