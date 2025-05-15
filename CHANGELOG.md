@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2025-05-15
+
+### Added
+- Enhanced `format_money/3` to support `Decimal` and properly parse binary strings representing decimals.
+- Added error handling to `format_money/3` for invalid or malformed binary string inputs, raising `ArgumentError`.
+- Added unit tests covering valid and invalid binary string inputs for `format_money/3`.
+
 ## [0.2.0] - 2025-05-14
 
 ### Added

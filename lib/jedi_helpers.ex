@@ -212,19 +212,27 @@ defmodule JediHelpers do
   def format_money(amount, currency, opts) do
     money =
       cond do
-        is_struct(amount, Money) -> amount
-        is_struct(amount, Decimal) -> Money.new(amount, currency)
-        is_integer(amount) -> Money.new(amount, currency)
+        is_struct(amount, Money) ->
+          amount
 
-is_binary(amount) ->
-  case Decimal.parse(amount) do
-    {decimal, ""} -> Money.new(decimal, currency)  
-    {_decimal, _rest} -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
-        :error -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
-  end
+        is_struct(amount, Decimal) ->
+          Money.new(amount, currency)
 
-        is_float(amount) -> Money.from_float(amount, currency)
-        true -> raise ArgumentError, "Invalid amount type: #{inspect(amount)}"
+        is_integer(amount) ->
+          Money.new(amount, currency)
+
+        is_binary(amount) ->
+          case Decimal.parse(amount) do
+            {decimal, ""} -> Money.new(decimal, currency)
+            {_decimal, _rest} -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
+            :error -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
+          end
+
+        is_float(amount) ->
+          Money.from_float(amount, currency)
+
+        true ->
+          raise ArgumentError, "Invalid amount type: #{inspect(amount)}"
       end
 
     case Money.to_string(money, opts) do
