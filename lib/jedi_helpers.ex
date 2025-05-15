@@ -205,31 +205,31 @@ defmodule JediHelpers do
   Refer to the [ex_money Money.to_string/2 documentation](https://hexdocs.pm/ex_money/Money.html#to_string/2) for the full list of supported options.
   """
 
-  def format_money(amount, currency, opts \\ [])
+  def format_money(amount, currency_code, opts \\ [])
 
-  def format_money(nil, _currency, _opts), do: nil
+  def format_money(nil, _currency_code, _opts), do: nil
 
-  def format_money(amount, currency, opts) do
+  def format_money(amount, currency_code, opts) do
     money =
       cond do
         is_struct(amount, Money) ->
           amount
 
         is_struct(amount, Decimal) ->
-          Money.new(amount, currency)
+          Money.new(amount, currency_code)
 
         is_integer(amount) ->
-          Money.new(amount, currency)
+          Money.new(amount, currency_code)
 
         is_binary(amount) ->
           case Decimal.parse(amount) do
-            {decimal, ""} -> Money.new(decimal, currency)
+            {decimal, ""} -> Money.new(decimal, currency_code)
             {_decimal, _rest} -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
             :error -> raise ArgumentError, "Invalid binary amount: #{inspect(amount)}"
           end
 
         is_float(amount) ->
-          Money.from_float(amount, currency)
+          Money.from_float(amount, currency_code)
 
         true ->
           raise ArgumentError, "Invalid amount type: #{inspect(amount)}"
