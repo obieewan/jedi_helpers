@@ -130,4 +130,43 @@ defmodule JediHelpersTest do
       end
     end
   end
+
+  describe "trim_description/2" do
+    test "trims description to default max length (50)" do
+      desc = String.duplicate("a", 60)
+      resource = %{description: desc}
+
+      result = JediHelpers.trim_description(resource)
+      assert String.length(result) == 50
+      assert String.starts_with?(result, "a")
+    end
+
+    test "trims description to given max length" do
+      resource = %{description: "Hello World!"}
+      assert JediHelpers.trim_description(resource, 5) == "Hello"
+    end
+
+    test "returns full description if shorter than max length" do
+      resource = %{description: "Short"}
+      assert JediHelpers.trim_description(resource, 10) == "Short"
+    end
+
+    test "raises ArgumentError when description is missing" do
+      assert_raise ArgumentError, ~r/Invalid argument for trim_description/, fn ->
+        JediHelpers.trim_description(%{})
+      end
+    end
+
+    test "raises ArgumentError when description is nil" do
+      assert_raise ArgumentError, ~r/Invalid argument for trim_description/, fn ->
+        JediHelpers.trim_description(%{description: nil})
+      end
+    end
+
+    test "raises ArgumentError when description is not a binary" do
+      assert_raise ArgumentError, ~r/Invalid argument for trim_description/, fn ->
+        JediHelpers.trim_description(%{description: 123})
+      end
+    end
+  end
 end
