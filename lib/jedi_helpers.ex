@@ -240,4 +240,44 @@ defmodule JediHelpers do
       {:error, reason} -> raise RuntimeError, "Failed to format money: #{inspect(reason)}"
     end
   end
+
+  @doc """
+  Trims the `:description` field of the given resource to a maximum length.
+
+  ## Parameters
+
+    - resource: A map that must contain a non-nil, binary `:description` key.
+    - max_length: The maximum length of the trimmed description (default is 50).
+
+  ## Examples
+
+      iex> trim_description(%{description: "This is a very long description that needs trimming"}, 10)
+      "This is a "
+
+      iex> trim_description(%{description: "Short"}, 10)
+      "Short"
+
+  ## Raises
+
+  Raises `ArgumentError` if the `resource` does not contain a non-nil, binary `:description` field.
+  """
+  def trim_description(resource, max_length \\ 50)
+
+  def trim_description(%{description: description}, max_length)
+      when not is_nil(description) and is_binary(description) do
+    String.slice(description, 0, max_length)
+  end
+
+  def trim_description(resource, _max_length) do
+    raise ArgumentError, """
+    Invalid argument for trim_description/2.
+
+    Expected a map with a non-nil, binary `:description` key.
+
+    Example:
+      %{description: "some string"}
+
+    Received: #{inspect(resource)}
+    """
+  end
 end
