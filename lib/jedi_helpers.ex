@@ -280,4 +280,10 @@ defmodule JediHelpers do
     Received: #{inspect(resource)}
     """
   end
+
+  def number_to_words(number) do
+    {:ok, word} = JediHelpers.Internal.Cldr.Number.to_string(number, format: :spellout_verbose)
+
+    word
+  end
 end
