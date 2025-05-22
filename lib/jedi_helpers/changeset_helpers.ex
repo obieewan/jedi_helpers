@@ -1,33 +1,45 @@
 defmodule JediHelpers.ChangesetHelpers do
+  @moduledoc """
+  Provides helper functions for trimming whitespace and validating string fields
+  in Ecto changesets. Particularly useful for ensuring uniqueness and formatting
+  of string inputs before applying database constraints.
+  """
+
   import Ecto.Changeset
 
+  @field_type :string
+
   @doc """
-  Trims leading and trailing whitespaces from the specified fields in the changeset.
-  This ensures consistency and helps maintain uniqueness, especially for `citext` fields.
+  Trims leading and trailing whitespace from one or more string fields in the changeset.
+  Ensures consistency and helps maintain uniqueness constraints (e.g., on `citext` fields).
 
-  You can also specify a `max` length in the `opts` to validate that the field's length
-  after trimming does not exceed the specified value. If it exceeds, a validation error is added.
+  You may specify a `:max` option to validate that the trimmed value does not exceed
+  the given length. If it does, a validation error is added.
 
-  ## Example
+  ## Examples
 
   changeset
   |> trim_whitespace(:username, max: 50)
   |> unique_constraint(:username)
 
-  ## Parameters:
-  - `changeset` (`Ecto.Changeset.t()`): The changeset containing the field to be processed.
-  - `field` (`atom()` or `[atom()]`): The field(s) to trim.
-  - `opts` (`keyword()`): Options for the function:
-  - `:max` (`integer()`): The maximum allowed length after trimming. Adds a validation error if exceeded.
+  changeset
+  |> trim_whitespace([:first_name, :last_name])
 
-  ## Returns:
-  - An updated `Ecto.Changeset.t()` with the trimmed field and potential validation error if the length exceeds `max`.
+  ## Options
+
+  * `:max` - maximum allowed length for the trimmed string (default: 255)
+
+  ## Parameters
+
+  * `changeset` - an `Ecto.Changeset.t()` to process
+    * `key` or `keys` - atom or list of atoms naming the field(s) to trim
+    * `opts` - keyword list of options
+
+  ## Returns
+
+  * An updated `Ecto.Changeset.t()` with trimmed fields and length validations applied.
   """
-
-  @field_type :string
-
   @spec trim_whitespace(Ecto.Changeset.t(), atom() | [atom()], keyword()) :: Ecto.Changeset.t()
-
   def trim_whitespace(changeset, keys, opts \\ [])
 
   def trim_whitespace(changeset, key, opts) when is_atom(key) do
@@ -44,6 +56,7 @@ defmodule JediHelpers.ChangesetHelpers do
 
             changeset
             |> put_change(key, new_value)
+            |> unique_constraint(key)
             |> validate_length(key, max: max)
 
           _ ->
@@ -56,8 +69,8 @@ defmodule JediHelpers.ChangesetHelpers do
   end
 
   def trim_whitespace(changeset, keys, opts) when is_list(keys) do
-    Enum.reduce(keys, changeset, fn key, changeset ->
-      trim_whitespace(changeset, key, opts)
+    Enum.reduce(keys, changeset, fn key, acc ->
+      trim_whitespace(acc, key, opts)
     end)
   end
 end
