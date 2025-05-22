@@ -10,40 +10,35 @@ defmodule JediHelpers.ChangesetHelpers do
   @field_type :string
 
   @doc """
-  Trims leading and trailing whitespace from one or more string fields in the changeset.
-  Ensures consistency and helps maintain uniqueness constraints (e.g., on `citext` fields).
-
-  You may specify a `:max` option to validate that the trimmed value does not exceed
-  the given length. If it does, a validation error is added.
-
-  ## Examples
-
-  changeset
-  |> trim_whitespace(:username, max: 50)
-  |> unique_constraint(:username)
-
-  changeset
-  |> trim_whitespace([:first_name, :last_name])
+  Trims leading and trailing whitespaces from the specified fields in the changeset.
+  This ensures consistency and helps maintain uniqueness, especially for `citext` fields.
 
   ## Options
 
-  * `:max` - maximum allowed length for the trimmed string (default: 255)
+  - `:max` (`integer`): Maximum allowed length after trimming. If exceeded, a validation error is added. Default is 255.
+  - `:enforce_unique` (`boolean`): When set to `true`, adds a `unique_constraint/3` to the field. Default is `false`.
+
+  ## Example
+
+      changeset
+      |> trim_whitespace(:username, max: 50, enforce_unique: true)
 
   ## Parameters
 
-  * `changeset` - an `Ecto.Changeset.t()` to process
-    * `key` or `keys` - atom or list of atoms naming the field(s) to trim
-    * `opts` - keyword list of options
+  - `changeset` (`Ecto.Changeset.t()`): The changeset containing the field(s) to be processed.
+  - `field` (`atom()` or `[atom()]`): The field(s) to trim.
+  - `opts` (`keyword()`): Options for trimming and validation.
 
   ## Returns
 
-  * An updated `Ecto.Changeset.t()` with trimmed fields and length validations applied.
+  - An updated `Ecto.Changeset.t()` with trimmed values and optional validations.
   """
   @spec trim_whitespace(Ecto.Changeset.t(), atom() | [atom()], keyword()) :: Ecto.Changeset.t()
   def trim_whitespace(changeset, keys, opts \\ [])
 
   def trim_whitespace(changeset, key, opts) when is_atom(key) do
     max = Keyword.get(opts, :max, 255)
+    enforce_unique? = Keyword.get(opts, :enforce_unique, false)
 
     case Map.get(changeset.types, key) do
       type when type == @field_type ->
@@ -56,7 +51,7 @@ defmodule JediHelpers.ChangesetHelpers do
 
             changeset
             |> put_change(key, new_value)
-            |> unique_constraint(key)
+            |> maybe_enforce_unique(key, enforce_unique?)
             |> validate_length(key, max: max)
 
           _ ->
@@ -73,4 +68,7 @@ defmodule JediHelpers.ChangesetHelpers do
       trim_whitespace(acc, key, opts)
     end)
   end
+
+  defp maybe_enforce_unique(changeset, key, true), do: unique_constraint(changeset, key)
+  defp maybe_enforce_unique(changeset, _key, false), do: changeset
 end

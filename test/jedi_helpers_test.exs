@@ -169,4 +169,26 @@ defmodule JediHelpersTest do
       end
     end
   end
+
+  describe "number_to_words/1" do
+    test "converts zero" do
+      assert JediHelpers.number_to_words(0) == "zero"
+    end
+
+    test "converts single digits" do
+      assert JediHelpers.number_to_words(5) == "five"
+    end
+
+    test "converts tens" do
+      assert JediHelpers.number_to_words(42) == "forty-two"
+    end
+
+    test "converts hundreds" do
+      assert JediHelpers.number_to_words(123) == "one hundred and twenty-three"
+    end
+
+    test "converts thousands" do
+      assert JediHelpers.number_to_words(1001) == "one thousand and one"
+    end
+  end
 end

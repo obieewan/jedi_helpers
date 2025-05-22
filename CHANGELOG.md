@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2025-05-15
+### Added
+- trim_whitespace/3 – Trims spaces in changeset fields and adds unique_constraint + max length validation.
+- number_to_words/1 – Converts a number into its word form.
+- trim_description/2 – Truncates a string with ellipsis.
+
 ## [0.2.1] - 2025-05-15
 
 ### Added
