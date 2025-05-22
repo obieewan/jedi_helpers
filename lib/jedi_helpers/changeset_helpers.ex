@@ -10,15 +10,15 @@ defmodule JediHelpers.ChangesetHelpers do
   @field_type :string
 
   @doc """
-  Trims leading and trailing whitespaces from the specified fields in the changeset.
-  This ensures consistency and helps maintain uniqueness, especially for `citext` fields.
+  Trims leading and trailing whitespace from one or more string fields in the changeset.
+  Ensures consistency and helps maintain uniqueness constraints (e.g., on `citext` fields).
 
   ## Options
 
   - `:max` (`integer`): Maximum allowed length after trimming. If exceeded, a validation error is added. Default is 255.
   - `:enforce_unique` (`boolean`): When set to `true`, adds a `unique_constraint/3` to the field. Default is `false`.
 
-  ## Example
+  ## Examples
 
       changeset
       |> trim_whitespace(:username, max: 50, enforce_unique: true)
