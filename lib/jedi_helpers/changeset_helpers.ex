@@ -47,10 +47,9 @@ defmodule JediHelpers.ChangesetHelpers do
             changeset
 
           {_source, value} when is_binary(value) ->
-            new_value = String.trim(value)
 
             changeset
-            |> put_change(key, new_value)
+            |> update_change(key, &String.trim/1)
             |> maybe_enforce_unique(key, enforce_unique?)
             |> validate_length(key, max: max)
 
