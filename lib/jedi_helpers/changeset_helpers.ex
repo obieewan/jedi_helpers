@@ -23,6 +23,9 @@ defmodule JediHelpers.ChangesetHelpers do
       changeset
       |> trim_whitespace(:username, max: 50, enforce_unique: true)
 
+      changeset
+      |> trim_whitespace(:username, enforce_unique: true)
+
   ## Parameters
 
   - `changeset` (`Ecto.Changeset.t()`): The changeset containing the field(s) to be processed.
@@ -40,24 +43,14 @@ defmodule JediHelpers.ChangesetHelpers do
     max = Keyword.get(opts, :max, 255)
     enforce_unique? = Keyword.get(opts, :enforce_unique, false)
 
-    case Map.get(changeset.types, key) do
-      type when type == @field_type ->
-        case fetch_field(changeset, key) do
-          {_source, nil} ->
-            changeset
+    cond do
+      Map.get(changeset.types, key) == @field_type ->
+        changeset
+        |> update_change(key, &String.trim/1)
+        |> maybe_enforce_unique(key, enforce_unique?)
+        |> validate_length(key, max: max)
 
-          {_source, value} when is_binary(value) ->
-
-            changeset
-            |> update_change(key, &String.trim/1)
-            |> maybe_enforce_unique(key, enforce_unique?)
-            |> validate_length(key, max: max)
-
-          _ ->
-            changeset
-        end
-
-      _ ->
+      true ->
         changeset
     end
   end
