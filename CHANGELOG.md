@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.4] - 2025-06-24
+### Fixed
+- Prevented `trim_whitespace/3` from raising `FunctionClauseError` when given non-string values.
+
+### Added
+- Test cases covering `nil`, integers, and booleans to validate `trim_whitespace/3` behavior with non-string types.
+
 ## [0.2.3] - 2025-06-05
 ### Refactor
 - trim_whitespace/3 – Trims spaces in changeset fields and adds unique_constraint + max length validation.
