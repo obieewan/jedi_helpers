@@ -55,5 +55,23 @@ defmodule JediHelpers.ChangesetHelpersTest do
                   [count: 10, validation: :length, kind: :max, type: :string]}
              ] = changeset.errors
     end
+
+    test "skips non-string values" do
+      changeset =
+        {%{}, %{name: :any}}
+        |> cast(%{name: 12345}, [:name])
+        |> ChangesetHelpers.trim_whitespace([:name])
+
+      assert get_field(changeset, :name) == 12345
+    end
+
+    test "skips boolean values" do
+      changeset =
+        {%{}, %{name: :any}}
+        |> cast(%{name: true}, [:name])
+        |> ChangesetHelpers.trim_whitespace([:name])
+
+      assert get_field(changeset, :name) == true
+    end
   end
 end

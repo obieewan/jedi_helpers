@@ -46,7 +46,10 @@ defmodule JediHelpers.ChangesetHelpers do
     cond do
       Map.get(changeset.types, key) == @field_type ->
         changeset
-        |> update_change(key, &String.trim/1)
+        |> update_change(key, fn
+          val when is_binary(val) -> String.trim(val)
+          val -> val
+        end)
         |> maybe_enforce_unique(key, enforce_unique?)
         |> validate_length(key, max: max)
 
