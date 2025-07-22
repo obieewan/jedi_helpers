@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5] - 2025-07-23
+### Update
+- Bump dependencies
+
 ## [0.2.4] - 2025-06-24
 ### Fixed
 - Prevented `trim_whitespace/3` from raising `FunctionClauseError` when given non-string values.
