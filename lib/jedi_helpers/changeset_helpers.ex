@@ -119,7 +119,7 @@ defmodule JediHelpers.ChangesetHelpers do
   def validate_any_required(changeset, fields, opts \\ [])
 
   def validate_any_required(changeset, [_ | _] = fields, opts) do
-    if Enum.any?(fields, &present?(get_field(changeset, &1))) do
+    if Enum.any?(fields, &JediHelpers.present?(get_field(changeset, &1))) do
       changeset
     else
       error_field = Keyword.get(opts, :error_field, hd(fields))
@@ -141,7 +141,4 @@ defmodule JediHelpers.ChangesetHelpers do
       normalized -> normalized
     end
   end
-
-  defp present?(value),
-    do: not (is_nil(value) or value == "" or (is_binary(value) and String.trim(value) == ""))
 end

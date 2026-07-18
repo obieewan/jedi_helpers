@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [0.3.0] - 2026-07-18
 
 ### Added
+- Added `blank?/1` and `present?/1` for consistent blank-value handling.
+- Added map helpers for removing blank entries and conditionally inserting values.
+- Added param helpers for safely casting Phoenix string or atom keyed params.
 - Added changeset helpers for normalizing strings and requiring any of several fields.
 - Added configurable label and value selectors to form options.
 
