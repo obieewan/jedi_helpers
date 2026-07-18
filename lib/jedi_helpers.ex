@@ -1,23 +1,22 @@
 defmodule JediHelpers do
   @moduledoc """
-  Documentation for `JediHelpers`.
+  General display and formatting helpers for Elixir and Phoenix applications.
+
+  Changeset, date, and form-specific helpers live in
+  `JediHelpers.ChangesetHelpers`, `JediHelpers.DateUtils`, and
+  `JediHelpers.FormHelpers` respectively.
   """
 
   @doc """
   Returns the underscored (snake_case) name of a struct's module as a string.
 
-  Useful for generating type identifiers from structs, especially in APIs or dynamic logic.
+  This is useful when a Phoenix component or API needs a stable type identifier
+  without the full module namespace.
 
-  ## Example
+  ## Use case and result
 
-      iex> resource_type(%JediHelpers.BlogPost{})
-      "blog_post"
-
-  ## Parameters:
-  - `resource` (`struct`): Any Elixir struct.
-
-  ## Returns:
-  - `String.t()`: The snake_case name of the struct's module (last segment only).
+      iex> JediHelpers.resource_type(%URI{})
+      "uri"
   """
   @spec resource_type(struct()) :: String.t()
   def resource_type(%module{} = _resource) do
@@ -30,18 +29,16 @@ defmodule JediHelpers do
   @doc """
   Extracts the path segment from a URI string.
 
-  Useful for isolating the path portion of a full URL (e.g. `/users/123`).
+  This is useful when a redirect or callback stores an absolute URL but a
+  Phoenix navigation function only needs its local path.
 
-  ## Example
+  ## Use case and result
 
-      iex> uri_parse_path("https://example.com/users/123?ref=home")
+      iex> JediHelpers.uri_parse_path("https://example.com/users/123?ref=home")
       "/users/123"
 
-  ## Parameters:
-  - `uri` (`String.t()`): A URI string.
-
-  ## Returns:
-  - `String.t()` or `nil`: The path component of the URI, or `nil` if absent.
+      iex> JediHelpers.uri_parse_path("https://example.com")
+      nil
   """
   @spec uri_parse_path(String.t()) :: String.t() | nil
   def uri_parse_path(uri) do
@@ -51,9 +48,9 @@ defmodule JediHelpers do
   @doc """
   Converts an atom into a human-readable string by title-casing its segments.
 
-  Useful for displaying labels or headings derived from atoms.
+  This is useful for turning enum values or schema field names into labels.
 
-  ## Examples
+  ## Use case and result
 
       iex> JediHelpers.atom_to_readable_string(:user_profile)
       "User Profile"
@@ -71,14 +68,19 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Formats a user's full name as `"First Last"`.
+  Formats a map or struct containing `:first_name` and `:last_name` as
+  `"First Last"`.
 
-  Returns `nil` if the input is `nil`.
+  This is useful for user labels in tables and select controls. Returns `nil`
+  when the user itself is `nil`.
 
-  ## Examples
+  ## Use case and result
 
-      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"})
+      iex> JediHelpers.format_name(%{first_name: "Luke", last_name: "Skywalker"})
       "Luke Skywalker"
+
+      iex> JediHelpers.format_name(nil)
+      nil
   """
   def format_name(nil), do: nil
 
@@ -87,12 +89,18 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Formats a user's name as `"Last, First"` if `:last_first` style is passed.
+  Formats a user's name using a requested display style.
 
-  ## Examples
+  Pass `:last_first` for sortable directory labels. Any other style uses
+  `"First Last"`.
 
-      iex> format_name(%{first_name: "Luke", last_name: "Skywalker"}, :last_first)
+  ## Use case and result
+
+      iex> JediHelpers.format_name(%{first_name: "Luke", last_name: "Skywalker"}, :last_first)
       "Skywalker, Luke"
+
+      iex> JediHelpers.format_name(%{first_name: "Leia", last_name: "Organa"}, :default)
+      "Leia Organa"
   """
   def format_name(user, style \\ :default)
 
@@ -110,11 +118,14 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Formats a user's full name with email as `"First Last - email@example.com"`.
+  Formats a user as `"First Last - email@example.com"`.
 
-  ## Examples
+  This is useful when names alone are ambiguous in an admin select or audit
+  screen.
 
-      iex> format_name_with_email(%{first_name: "Leia", last_name: "Organa", email: "leia@alderaan.com"})
+  ## Use case and result
+
+      iex> JediHelpers.format_name_with_email(%{first_name: "Leia", last_name: "Organa", email: "leia@alderaan.com"})
       "Leia Organa - leia@alderaan.com"
   """
   def format_name_with_email(%{first_name: first, last_name: last, email: email}) do
@@ -127,16 +138,13 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Formats a decimal or numeric input by:
+  Formats an integer, decimal string, or `Decimal` with thousands separators
+  and exactly two decimal places.
 
-    - Converting it to a `Decimal`
-    - Rounding to 2 decimal places
-    - Converting to a string
-    - Adding thousands separators (e.g., `"1,234.56"`)
+  This is useful for quantities and non-currency totals in reports. Returns
+  `nil` for `nil` and the empty string.
 
-  Returns `nil` if the input is `nil`.
-
-  ## Examples
+  ## Use case and result
 
       iex> format_decimal(1234567.891)
       "1,234,567.89"
@@ -146,10 +154,6 @@ defmodule JediHelpers do
 
       iex> format_decimal(nil)
       nil
-
-  ## Requirements
-
-  Requires the `:decimal` and `:number` libraries.
 
   """
   def format_decimal(nil), do: nil
@@ -169,14 +173,14 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Formats a given amount into a currency string using `Money`.
+  Formats an amount as a localized currency string using `Money`.
 
   ## Parameters
 
     - `amount`: A number representing the amount to format. Supported types:
       - `Money` struct (used directly)
       - `Decimal` (e.g., from Ecto fields)
-      - `integer` (treated as the smallest unit, like cents)
+      - `integer` (treated as whole currency units)
       - `float`
       - `string` (parsed into a Money amount)
     - `currency`: A string or atom representing the ISO 4217 currency code (e.g., `:php` for Philippine Peso).
@@ -189,7 +193,10 @@ defmodule JediHelpers do
     - Raises an `ArgumentError` for unsupported amount types.
     - Returns `nil` if the `amount` is `nil`.
 
-  ## Examples
+  ## Use case and result
+
+  A billing page can format stored numeric values without first constructing a
+  `Money` struct:
 
       iex> format_money(1000, :php)
       "₱1,000.00"
@@ -200,8 +207,8 @@ defmodule JediHelpers do
       iex> format_money(Decimal.new("1234.56"), :usd)
       "$1,234.56"
 
-      iex> format_money(1234.56, :php, symbol: false)
-      "1,234.56 PHP"
+      iex> JediHelpers.format_money("1234.56", :php)
+      "₱1,234.56"
 
   ## Formatting Options
 
@@ -246,14 +253,17 @@ defmodule JediHelpers do
   end
 
   @doc """
-  Trims the `:description` field of the given resource to a maximum length.
+  Returns at most `max_length` characters from a resource's `:description`.
+
+  This is useful for compact table cells and card previews. It slices the text;
+  it does not append an ellipsis. The default maximum is 50 characters.
 
   ## Parameters
 
     - resource: A map that must contain a non-nil, binary `:description` key.
     - max_length: The maximum length of the trimmed description (default is 50).
 
-  ## Examples
+  ## Use case and result
 
       iex> trim_description(%{description: "This is a very long description that needs trimming"}, 10)
       "This is a "
@@ -284,6 +294,22 @@ defmodule JediHelpers do
     Received: #{inspect(resource)}
     """
   end
+
+  @doc """
+  Spells an integer in English words.
+
+  This is useful for human-readable totals on invoices, checks, and generated
+  documents.
+
+  ## Use case and result
+
+      iex> JediHelpers.number_to_words(42)
+      "forty-two"
+
+      iex> JediHelpers.number_to_words(1001)
+      "one thousand and one"
+  """
+  @spec number_to_words(integer()) :: String.t()
 
   def number_to_words(number) do
     {:ok, word} = JediHelpers.Internal.Cldr.Number.to_string(number, format: :spellout_verbose)

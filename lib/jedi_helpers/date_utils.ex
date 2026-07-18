@@ -1,4 +1,11 @@
 defmodule JediHelpers.DateUtils do
+  @moduledoc """
+  Converts common spreadsheet and form date values into `Date` structs.
+
+  Invalid values return `nil`, making the helper convenient for optional import
+  fields where callers prefer a nullable result over an exception.
+  """
+
   @doc """
   Parses a variety of date formats into a `Date` struct.
 
@@ -11,24 +18,32 @@ defmodule JediHelpers.DateUtils do
   * Strings with leading/trailing whitespace are trimmed
   * Invalid or malformed strings return `nil`
 
-  ## Examples
+  ## Use cases and results
 
-  iex> to_date("40135")
-  ~D[2009-11-18]
+  Convert an Excel serial date during a CSV or spreadsheet import:
 
-  iex> to_date("2024-1-9")
-  ~D[2024-01-09]
+      iex> JediHelpers.DateUtils.to_date("40135")
+      ~D[2009-11-18]
 
-  iex> to_date("")
-  nil
+  Normalize a non-zero-padded date received from a form:
 
-  iex> to_date(%Date{year: 2020, month: 5, day: 10})
-  ~D[2020-05-10]
+      iex> JediHelpers.DateUtils.to_date("2024-1-9")
+      ~D[2024-01-09]
 
-  iex> to_date("not a date")
-  nil
+  Existing dates pass through unchanged, while blank and invalid values become
+  `nil`:
+
+      iex> JediHelpers.DateUtils.to_date(~D[2020-05-10])
+      ~D[2020-05-10]
+
+      iex> JediHelpers.DateUtils.to_date("")
+      nil
+
+      iex> JediHelpers.DateUtils.to_date("not a date")
+      nil
 
   """
+  @spec to_date(term()) :: Date.t() | nil
   def to_date(""), do: nil
 
   def to_date("0"), do: nil
