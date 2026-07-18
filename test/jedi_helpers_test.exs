@@ -4,6 +4,8 @@ end
 
 defmodule JediHelpersTest do
   use ExUnit.Case
+  doctest JediHelpers
+
   import JediHelpers
 
   describe "resource_type/1" do

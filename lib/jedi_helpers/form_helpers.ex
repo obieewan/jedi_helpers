@@ -18,6 +18,7 @@ defmodule JediHelpers.FormHelpers do
       iex> JediHelpers.FormHelpers.options_for(users, :name)
       [{"Alice", 1}, {"Bob", 2}]
 
+      iex> users = [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
       iex> JediHelpers.FormHelpers.options_for(users, &String.upcase(&1.name), :id)
       [{"ALICE", 1}, {"BOB", 2}]
 
@@ -53,7 +54,7 @@ defmodule JediHelpers.FormHelpers do
       ...> ]
       iex> JediHelpers.FormHelpers.options_for(
       ...>   users,
-      ...>   &"#{&1.last_name}, #{&1.first_name}",
+      ...>   &"\#{&1.last_name}, \#{&1.first_name}",
       ...>   :slug
       ...> )
       [{"Organa, Leia", "leia"}, {"Skywalker, Luke", "luke"}]

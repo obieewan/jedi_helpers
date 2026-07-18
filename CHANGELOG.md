@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-07-18
+
+### Updated
+- Expanded every public helper's documentation with practical use cases and expected results.
+- Added README examples for changeset normalization, form options, date parsing, and value formatting.
+- Added doctest coverage for general, date, and form helper examples.
+- Corrected decimal formatting and changeset constraint examples to match supported behavior.
+
 ## [0.3.0] - 2026-07-18
 
 ### Added

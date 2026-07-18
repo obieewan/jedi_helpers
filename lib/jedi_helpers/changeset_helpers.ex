@@ -31,18 +31,13 @@ defmodule JediHelpers.ChangesetHelpers do
       result =
         {%{}, types}
         |> Ecto.Changeset.cast(%{"username" => "  leia  "}, [:username])
-        |> JediHelpers.ChangesetHelpers.trim_whitespace(:username,
-          max: 50,
-          enforce_unique: true
-        )
+        |> JediHelpers.ChangesetHelpers.trim_whitespace(:username, max: 50)
 
       Ecto.Changeset.get_change(result, :username)
       # => "leia"
 
-      result.constraints
-      # => [%{constraint: "username", field: :username, match: :exact,
-      #      type: :unique, error_message: "has already been taken",
-      #      error_type: :unique}]
+  In a schema-backed changeset, pass `enforce_unique: true` to attach the
+  database unique constraint after trimming.
 
   When the trimmed value exceeds `:max`, the result is invalid rather than
   truncated:

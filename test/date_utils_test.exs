@@ -1,5 +1,7 @@
 defmodule JediHelpers.DateUtilsTest do
   use ExUnit.Case, async: true
+  doctest JediHelpers.DateUtils
+
   alias JediHelpers.DateUtils
 
   describe "to_date/1" do
