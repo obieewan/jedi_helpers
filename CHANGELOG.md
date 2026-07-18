@@ -5,14 +5,23 @@ All notable changes to this project will be documented in this file.
 ## [0.3.0] - 2026-07-18
 
 ### Added
-- Added changeset helpers for normalizing strings and requiring any of several fields.
-- Added configurable label and value selectors to form options.
+- Added `normalize_strings/3` for trimming changeset string fields and converting blank values to `nil`.
+- Added `validate_any_required/3` for requiring at least one of several changeset fields.
+- Added configurable field and function selectors to `options_for/3` for form labels and values.
 
 ### Updated
-- Updated Ecto, Decimal, ExDoc, ex_cldr, and ex_money to their latest compatible releases.
-- Made `ex_cldr_numbers` explicit because `number_to_words/1` uses it directly.
-- Removed the redundant `number` dependency and reused the existing CLDR backend for decimal formatting.
-- Removed the obsolete Money CLDR provider and disabled automatic exchange-rate service startup.
+- Updated Ecto to 3.14, Decimal to 3.1, ExDoc to 0.40, ex_cldr to 2.47, ex_cldr_numbers to 2.38, and ex_money to 6.1.
+- Made `ex_cldr_numbers` a direct dependency because `number_to_words/1` uses it directly.
+- Updated decimal formatting to reuse the existing CLDR backend.
+- Updated the package version and installation documentation for the 0.3.0 release.
+
+### Removed
+- Removed the redundant and Decimal 3-incompatible `number` dependency and its stale lockfile entry.
+- Removed the obsolete Money CLDR provider configuration.
+
+### Fixed
+- Disabled automatic ex_money exchange-rate service startup to avoid library startup side effects.
+- Fixed the unclosed installation code block in the README.
 
 ## [0.2.6] - 2025-11-19
 ### Update
