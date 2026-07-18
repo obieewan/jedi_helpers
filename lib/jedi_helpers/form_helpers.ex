@@ -1,6 +1,6 @@
 defmodule JediHelpers.FormHelpers do
   @moduledoc """
-  Helper functions for form inputs and options.
+  Builds `{label, value}` tuples accepted by Phoenix form select components.
   """
 
   @doc """
@@ -9,7 +9,10 @@ defmodule JediHelpers.FormHelpers do
   Labels and values may be field names or unary functions. The value defaults
   to the `:id` field.
 
-  ## Examples
+  ## Use case and result
+
+  Use a display field as the label and each record's `:id` as the submitted
+  value:
 
       iex> users = [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
       iex> JediHelpers.FormHelpers.options_for(users, :name)
@@ -18,7 +21,9 @@ defmodule JediHelpers.FormHelpers do
       iex> JediHelpers.FormHelpers.options_for(users, &String.upcase(&1.name), :id)
       [{"ALICE", 1}, {"BOB", 2}]
 
-  Raises if an element is not a map or struct, or if the arguments are invalid.
+  The result can be passed directly to a Phoenix `<.input type="select">`
+  `options` attribute. Raises `ArgumentError` when an item is not a map or when
+  a selector is invalid, and `KeyError` when a selected field is absent.
   """
   @spec options_for([map()], atom() | (map() -> term())) :: [{term(), term()}]
   def options_for(list, label)
@@ -36,7 +41,22 @@ defmodule JediHelpers.FormHelpers do
   @doc """
   Generates option tuples using configurable label and value selectors.
 
-  Each selector can be an atom naming a map field or a unary function.
+  Each selector can be an atom naming a map field or a unary function. This is
+  useful when a select submits a slug instead of an ID or needs a composite
+  label.
+
+  ## Use case and result
+
+      iex> users = [
+      ...>   %{id: 1, first_name: "Leia", last_name: "Organa", slug: "leia"},
+      ...>   %{id: 2, first_name: "Luke", last_name: "Skywalker", slug: "luke"}
+      ...> ]
+      iex> JediHelpers.FormHelpers.options_for(
+      ...>   users,
+      ...>   &"#{&1.last_name}, #{&1.first_name}",
+      ...>   :slug
+      ...> )
+      [{"Organa, Leia", "leia"}, {"Skywalker, Luke", "luke"}]
   """
   @spec options_for([map()], atom() | (map() -> term()), atom() | (map() -> term())) ::
           [{term(), term()}]

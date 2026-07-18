@@ -1,8 +1,9 @@
 defmodule JediHelpers.ChangesetHelpers do
   @moduledoc """
-  Provides helper functions for trimming whitespace and validating string fields
-  in Ecto changesets. Particularly useful for ensuring uniqueness and formatting
-  of string inputs before applying database constraints.
+  Normalization and validation helpers for Ecto changesets.
+
+  These helpers are intended for schema `changeset/2` pipelines that receive
+  browser form input and need consistent values before persistence.
   """
 
   import Ecto.Changeset
@@ -10,31 +11,49 @@ defmodule JediHelpers.ChangesetHelpers do
   @field_type :string
 
   @doc """
-  Trims leading and trailing whitespace from one or more string fields in the changeset.
-  Ensures consistency and helps maintain uniqueness constraints (e.g., on `citext` fields).
+  Trims leading and trailing whitespace from one or more string fields.
+
+  The helper also validates the post-trim length and can attach an Ecto unique
+  constraint. Non-string fields are ignored.
 
   ## Options
 
-  - `:max` (`integer`): Maximum allowed length after trimming. If exceeded, a validation error is added. Default is 255.
-  - `:enforce_unique` (`boolean`): When set to `true`, adds a `unique_constraint/3` to the field. Default is `false`.
+  - `:max` - maximum allowed length after trimming; defaults to `255`.
+  - `:enforce_unique` - adds `unique_constraint/3`; defaults to `false`.
 
-  ## Examples
+  ## Use case and result
 
-      changeset
-      |> trim_whitespace(:username, max: 50, enforce_unique: true)
+  A registration changeset can normalize a username before validating or
+  inserting it:
 
-      changeset
-      |> trim_whitespace(:username, enforce_unique: true)
+      types = %{username: :string}
 
-  ## Parameters
+      result =
+        {%{}, types}
+        |> Ecto.Changeset.cast(%{"username" => "  leia  "}, [:username])
+        |> JediHelpers.ChangesetHelpers.trim_whitespace(:username,
+          max: 50,
+          enforce_unique: true
+        )
 
-  - `changeset` (`Ecto.Changeset.t()`): The changeset containing the field(s) to be processed.
-  - `field` (`atom()` or `[atom()]`): The field(s) to trim.
-  - `opts` (`keyword()`): Options for trimming and validation.
+      Ecto.Changeset.get_change(result, :username)
+      # => "leia"
 
-  ## Returns
+      result.constraints
+      # => [%{constraint: "username", field: :username, match: :exact,
+      #      type: :unique, error_message: "has already been taken",
+      #      error_type: :unique}]
 
-  - An updated `Ecto.Changeset.t()` with trimmed values and optional validations.
+  When the trimmed value exceeds `:max`, the result is invalid rather than
+  truncated:
+
+      result =
+        {%{}, types}
+        |> Ecto.Changeset.cast(%{"username" => "  too-long  "}, [:username])
+        |> JediHelpers.ChangesetHelpers.trim_whitespace(:username, max: 4)
+
+      result.valid?
+      # => false
   """
   @spec trim_whitespace(Ecto.Changeset.t(), atom() | [atom()], keyword()) :: Ecto.Changeset.t()
   def trim_whitespace(changeset, keys, opts \\ [])
@@ -65,20 +84,31 @@ defmodule JediHelpers.ChangesetHelpers do
   end
 
   @doc """
-  Trims string changes and converts blank strings to `nil` by default.
+  Trims string changes and converts whitespace-only strings to `nil` by default.
 
   This is useful for optional form fields where whitespace-only input should be
   stored as `nil`. Non-string fields and fields without a change are left alone.
 
   Set `:empty_to_nil` to `false` to retain an empty string after trimming.
 
-  ## Examples
+  ## Use case and result
 
-      changeset
-      |> normalize_strings([:first_name, :last_name])
+  An optional profile form can store meaningful names while normalizing an
+  empty email field to `nil`:
 
-      changeset
-      |> normalize_strings(:reference, empty_to_nil: false)
+      types = %{name: :string, email: :string}
+
+      result =
+        {%{}, types}
+        |> Ecto.Changeset.cast(%{"name" => "  Leia  ", "email" => "   "},
+          [:name, :email]
+        )
+        |> JediHelpers.ChangesetHelpers.normalize_strings([:name, :email])
+
+      result.changes
+      # => %{email: nil, name: "Leia"}
+
+  With `empty_to_nil: false`, whitespace-only input becomes `""` instead.
   """
   @spec normalize_strings(Ecto.Changeset.t(), atom() | [atom()], keyword()) ::
           Ecto.Changeset.t()
@@ -107,13 +137,27 @@ defmodule JediHelpers.ChangesetHelpers do
   By default, the error is attached to the first field. Use `:error_field` and
   `:message` to customize the resulting changeset error.
 
-  ## Example
+  ## Use case and result
 
-      changeset
-      |> validate_any_required([:email, :phone],
-        error_field: :email,
-        message: "email or phone is required"
-      )
+  A contact form can accept either an email address or a phone number:
+
+      types = %{email: :string, phone: :string}
+
+      result =
+        {%{}, types}
+        |> Ecto.Changeset.cast(%{}, [:email, :phone])
+        |> JediHelpers.ChangesetHelpers.validate_any_required([:email, :phone],
+          error_field: :email,
+          message: "email or phone is required"
+        )
+
+      result.valid?
+      # => false
+
+      result.errors[:email]
+      # => {"email or phone is required", [validation: :required]}
+
+  If either field contains a value, the changeset remains valid.
   """
   @spec validate_any_required(Ecto.Changeset.t(), [atom()], keyword()) :: Ecto.Changeset.t()
   def validate_any_required(changeset, fields, opts \\ [])
