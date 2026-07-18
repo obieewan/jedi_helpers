@@ -146,13 +146,13 @@ defmodule JediHelpers do
 
   ## Use case and result
 
-      iex> format_decimal(1234567.891)
-      "1,234,567.89"
+      iex> JediHelpers.format_decimal(1_234_567)
+      "1,234,567.00"
 
-      iex> format_decimal("1000.1")
+      iex> JediHelpers.format_decimal("1000.1")
       "1,000.10"
 
-      iex> format_decimal(nil)
+      iex> JediHelpers.format_decimal(nil)
       nil
 
   """
@@ -198,13 +198,13 @@ defmodule JediHelpers do
   A billing page can format stored numeric values without first constructing a
   `Money` struct:
 
-      iex> format_money(1000, :php)
+      iex> JediHelpers.format_money(1000, :php)
       "₱1,000.00"
 
-      iex> format_money(nil, :php)
+      iex> JediHelpers.format_money(nil, :php)
       nil
 
-      iex> format_money(Decimal.new("1234.56"), :usd)
+      iex> JediHelpers.format_money(Decimal.new("1234.56"), :usd)
       "$1,234.56"
 
       iex> JediHelpers.format_money("1234.56", :php)
@@ -265,10 +265,10 @@ defmodule JediHelpers do
 
   ## Use case and result
 
-      iex> trim_description(%{description: "This is a very long description that needs trimming"}, 10)
+      iex> JediHelpers.trim_description(%{description: "This is a very long description that needs trimming"}, 10)
       "This is a "
 
-      iex> trim_description(%{description: "Short"}, 10)
+      iex> JediHelpers.trim_description(%{description: "Short"}, 10)
       "Short"
 
   ## Raises

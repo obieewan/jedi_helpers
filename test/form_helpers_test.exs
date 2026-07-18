@@ -1,5 +1,6 @@
 defmodule JediHelpers.FormHelpersTest do
   use ExUnit.Case, async: true
+  doctest JediHelpers.FormHelpers
 
   alias JediHelpers.FormHelpers
 
