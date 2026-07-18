@@ -37,14 +37,12 @@ defmodule JediHelpers.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:ecto, "~> 3.13.5"},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:decimal, "~> 2.3.0"},
-      {:number, "~> 1.0.5"},
-      {:ex_money, "~> 5.23.0"},
-      {:ex_cldr, "~> 2.44.1"}
+      {:ecto, "~> 3.14"},
+      {:ex_doc, "~> 0.40.3", only: :dev, runtime: false},
+      {:decimal, "~> 3.1"},
+      {:ex_money, "~> 6.1"},
+      {:ex_cldr, "~> 2.47"},
+      {:ex_cldr_numbers, "~> 2.38"}
     ]
   end
 end

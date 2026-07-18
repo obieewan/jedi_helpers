@@ -4,6 +4,6 @@ defmodule JediHelpers.Internal.Cldr do
   use Cldr,
     locales: ["en"],
     default_locale: "en",
-    providers: [Cldr.Number, Money],
+    providers: [Cldr.Number],
     generate_docs: false
 end

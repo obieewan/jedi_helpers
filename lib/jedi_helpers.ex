@@ -157,11 +157,15 @@ defmodule JediHelpers do
   def format_decimal(""), do: nil
 
   def format_decimal(value) do
-    value
-    |> Decimal.new()
-    |> Decimal.round(2)
-    |> Decimal.to_string()
-    |> Number.Delimit.number_to_delimited()
+    decimal =
+      value
+      |> Decimal.new()
+      |> Decimal.round(2)
+
+    {:ok, formatted} =
+      JediHelpers.Internal.Cldr.Number.to_string(decimal, format: "#,##0.00")
+
+    formatted
   end
 
   @doc """

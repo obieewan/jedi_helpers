@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Updated
+- Updated Ecto, Decimal, ExDoc, ex_cldr, and ex_money to their latest compatible releases.
+- Made `ex_cldr_numbers` explicit because `number_to_words/1` uses it directly.
+- Removed the redundant `number` dependency and reused the existing CLDR backend for decimal formatting.
+- Removed the obsolete Money CLDR provider and disabled automatic exchange-rate service startup.
+
 ## [0.2.6] - 2025-11-19
 ### Update
 - Bump dependencies
