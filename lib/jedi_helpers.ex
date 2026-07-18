@@ -1,37 +1,7 @@
 defmodule JediHelpers do
   @moduledoc """
-  General-purpose helpers shared across Elixir and Phoenix applications.
+  Documentation for `JediHelpers`.
   """
-
-  @doc """
-  Returns whether a value should be treated as blank.
-
-  `nil`, empty collections, and strings containing only whitespace are blank.
-  Booleans and numeric zero remain meaningful values and are not blank.
-
-  ## Examples
-
-      iex> JediHelpers.blank?("   ")
-      true
-
-      iex> JediHelpers.blank?(false)
-      false
-  """
-  @spec blank?(term()) :: boolean()
-  def blank?(nil), do: true
-  def blank?(value) when is_binary(value), do: String.trim(value) == ""
-  def blank?([]), do: true
-  def blank?(map) when is_map(map), do: map_size(map) == 0
-  def blank?(_value), do: false
-
-  @doc """
-  Returns the inverse of `blank?/1`.
-
-  Useful in guards expressed through `Enum` functions and when conditionally
-  building params or assigns.
-  """
-  @spec present?(term()) :: boolean()
-  def present?(value), do: not blank?(value)
 
   @doc """
   Returns the underscored (snake_case) name of a struct's module as a string.
@@ -179,7 +149,7 @@ defmodule JediHelpers do
 
   ## Requirements
 
-  Requires the `:decimal` and `:ex_cldr_numbers` libraries.
+  Requires the `:decimal` and `:number` libraries.
 
   """
   def format_decimal(nil), do: nil

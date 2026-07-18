@@ -6,22 +6,6 @@ defmodule JediHelpersTest do
   use ExUnit.Case
   import JediHelpers
 
-  describe "blank?/1 and present?/1" do
-    test "recognizes blank values" do
-      for value <- [nil, "", "  \n", [], %{}] do
-        assert blank?(value)
-        refute present?(value)
-      end
-    end
-
-    test "preserves meaningful false and zero values" do
-      for value <- [false, 0, "0", [nil], %{value: nil}] do
-        refute blank?(value)
-        assert present?(value)
-      end
-    end
-  end
-
   describe "resource_type/1" do
     test "returns the snake_case module name of a struct" do
       assert resource_type(%JediHelpers.BlogPost{}) == "blog_post"

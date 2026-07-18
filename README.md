@@ -7,8 +7,6 @@ A collection of general-purpose helpers for Elixir projects, designed to make yo
 - Changeset string trimming and blank-to-`nil` normalization.
 - Validation that at least one of several changeset fields is present.
 - Select-option generation with field or function selectors.
-- Blank-value checks and helpers for conditionally building maps.
-- Safe casting for Phoenix controller and LiveView params.
 - Date parsing, number and money formatting, and common display helpers.
 
 ## Installation
