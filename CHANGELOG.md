@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+- Added changeset helpers for normalizing strings and requiring any of several fields.
+- Added configurable label and value selectors to form options.
+
 ### Updated
 - Updated Ecto, Decimal, ExDoc, ex_cldr, and ex_money to their latest compatible releases.
 - Made `ex_cldr_numbers` explicit because `number_to_words/1` uses it directly.

@@ -64,6 +64,84 @@ defmodule JediHelpers.ChangesetHelpers do
     end)
   end
 
+  @doc """
+  Trims string changes and converts blank strings to `nil` by default.
+
+  This is useful for optional form fields where whitespace-only input should be
+  stored as `nil`. Non-string fields and fields without a change are left alone.
+
+  Set `:empty_to_nil` to `false` to retain an empty string after trimming.
+
+  ## Examples
+
+      changeset
+      |> normalize_strings([:first_name, :last_name])
+
+      changeset
+      |> normalize_strings(:reference, empty_to_nil: false)
+  """
+  @spec normalize_strings(Ecto.Changeset.t(), atom() | [atom()], keyword()) ::
+          Ecto.Changeset.t()
+  def normalize_strings(changeset, fields, opts \\ [])
+
+  def normalize_strings(changeset, field, opts) when is_atom(field) do
+    if Map.get(changeset.types, field) == @field_type do
+      empty_to_nil? = Keyword.get(opts, :empty_to_nil, true)
+
+      update_change(changeset, field, fn
+        value when is_binary(value) -> normalize_string(value, empty_to_nil?)
+        value -> value
+      end)
+    else
+      changeset
+    end
+  end
+
+  def normalize_strings(changeset, fields, opts) when is_list(fields) do
+    Enum.reduce(fields, changeset, &normalize_strings(&2, &1, opts))
+  end
+
+  @doc """
+  Validates that at least one of the given fields has a non-blank value.
+
+  By default, the error is attached to the first field. Use `:error_field` and
+  `:message` to customize the resulting changeset error.
+
+  ## Example
+
+      changeset
+      |> validate_any_required([:email, :phone],
+        error_field: :email,
+        message: "email or phone is required"
+      )
+  """
+  @spec validate_any_required(Ecto.Changeset.t(), [atom()], keyword()) :: Ecto.Changeset.t()
+  def validate_any_required(changeset, fields, opts \\ [])
+
+  def validate_any_required(changeset, [_ | _] = fields, opts) do
+    if Enum.any?(fields, &present?(get_field(changeset, &1))) do
+      changeset
+    else
+      error_field = Keyword.get(opts, :error_field, hd(fields))
+      message = Keyword.get(opts, :message, "at least one field must be present")
+      add_error(changeset, error_field, message, validation: :required)
+    end
+  end
+
+  def validate_any_required(_changeset, [], _opts) do
+    raise ArgumentError, "validate_any_required/3 expects at least one field"
+  end
+
   defp maybe_enforce_unique(changeset, key, true), do: unique_constraint(changeset, key)
   defp maybe_enforce_unique(changeset, _key, false), do: changeset
+
+  defp normalize_string(value, empty_to_nil?) do
+    case String.trim(value) do
+      "" when empty_to_nil? -> nil
+      normalized -> normalized
+    end
+  end
+
+  defp present?(value),
+    do: not (is_nil(value) or value == "" or (is_binary(value) and String.trim(value) == ""))
 end

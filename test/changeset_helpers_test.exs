@@ -74,4 +74,57 @@ defmodule JediHelpers.ChangesetHelpersTest do
       assert get_field(changeset, :name) == true
     end
   end
+
+  describe "normalize_strings/3" do
+    test "trims fields and converts whitespace-only changes to nil" do
+      changeset =
+        %TestStruct{}
+        |> cast(%{name: "  Leia  ", email: "   "}, [:name, :email])
+        |> ChangesetHelpers.normalize_strings([:name, :email])
+
+      assert get_change(changeset, :name) == "Leia"
+      assert get_change(changeset, :email) == nil
+    end
+
+    test "can retain an empty string" do
+      changeset =
+        %TestStruct{}
+        |> cast(%{name: "   "}, [:name], empty_values: [])
+        |> ChangesetHelpers.normalize_strings(:name, empty_to_nil: false)
+
+      assert get_change(changeset, :name) == ""
+    end
+  end
+
+  describe "validate_any_required/3" do
+    test "accepts a non-blank value in any field" do
+      changeset =
+        %TestStruct{}
+        |> cast(%{email: "luke@example.com"}, [:name, :email])
+        |> ChangesetHelpers.validate_any_required([:name, :email])
+
+      assert changeset.valid?
+    end
+
+    test "adds a customizable error when all fields are blank" do
+      changeset =
+        %TestStruct{}
+        |> cast(%{}, [:name, :email])
+        |> ChangesetHelpers.validate_any_required([:name, :email],
+          error_field: :email,
+          message: "name or email is required"
+        )
+
+      assert {"name or email is required", [validation: :required]} =
+               changeset.errors[:email]
+    end
+
+    test "requires at least one field" do
+      assert_raise ArgumentError, fn ->
+        %TestStruct{}
+        |> change()
+        |> ChangesetHelpers.validate_any_required([])
+      end
+    end
+  end
 end

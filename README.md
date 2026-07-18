@@ -4,8 +4,10 @@ A collection of general-purpose helpers for Elixir projects, designed to make yo
 
 ## Features
 
-- `JediHelpers.ChangesetHelpers.trim_whitespace/2` – trims leading and trailing whitespace from string fields in Ecto changesets.
-- Other helper functions coming soon.
+- Changeset string trimming and blank-to-`nil` normalization.
+- Validation that at least one of several changeset fields is present.
+- Select-option generation with field or function selectors.
+- Date parsing, number and money formatting, and common display helpers.
 
 ## Installation
 
@@ -17,8 +19,8 @@ def deps do
     {:jedi_helpers, "~> 0.2.6"}
   ]
 end
+```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/jedi_helpers>.
-
