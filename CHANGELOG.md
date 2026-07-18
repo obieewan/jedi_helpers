@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [0.3.0] - 2026-07-18
 
 ### Added
 - Added changeset helpers for normalizing strings and requiring any of several fields.

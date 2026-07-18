@@ -16,7 +16,7 @@ Add `:jedi_helpers` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:jedi_helpers, "~> 0.2.6"}
+    {:jedi_helpers, "~> 0.3.0"}
   ]
 end
 ```
